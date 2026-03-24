@@ -1,12 +1,13 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "hyperagents",
+  "version": "0.1.0",
+  "description": "Self-referential self-improving agents for Claude Code — evolutionary optimization via LLM-driven mutation and fitness-based selection",
   "owner": {
-    "name": "Zpankz",
-    "url": "https://github.com/Zpankz"
+    "name": "Zpankz"
   },
   "metadata": {
-    "description": "Self-referential self-improving agents for Claude Code — evolutionary optimization via LLM-driven mutation and fitness-based selection",
-    "version": "0.1.0"
+    "description": "Self-referential self-improving agents for Claude Code — evolutionary optimization via LLM-driven mutation and fitness-based selection"
   },
   "plugins": [
     {
