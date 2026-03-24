@@ -1,0 +1,14 @@
+.gitnexus
+
+# Runtime evolution data
+.hyperagents/
+!.hyperagents/config.json
+
+# Research artifacts (local only)
+.research/
+
+# OS files
+.DS_Store
+
+# Claude local project files
+.claude/

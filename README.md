@@ -18,7 +18,88 @@
 
 </div>
 
-## Setup
+> **This fork adds a Claude Code plugin, Pi extension, and npm package** that bring HyperAgents' self-referential self-improvement patterns to your everyday development workflow. See [Agent Extensions](#agent-extensions) below.
+
+---
+
+## Agent Extensions
+
+### Claude Code Plugin
+
+Install the HyperAgents plugin for Claude Code:
+
+```bash
+# From the marketplace (recommended)
+/plugin install https://github.com/Zpankz/hyperagents
+
+# Or via npm
+/plugin install hyperagents
+```
+
+**Commands:**
+
+| Command | Description |
+|---------|-------------|
+| `/hyperagents:evolve` | Start or resume an evolutionary improvement loop |
+| `/hyperagents:evaluate` | Evaluate a generation against fitness criteria |
+| `/hyperagents:archive` | View, query, and manage the evolutionary archive |
+| `/hyperagents:select-parent` | Select next parent with configurable strategy |
+| `/hyperagents:status` | Show evolution progress dashboard |
+
+**Agents:** meta-agent (Opus), task-agent (Sonnet), evaluator (Haiku), ensemble-agent (Haiku)
+
+**Skills:** Self-Improve, Evolutionary Archive, Fitness Evaluation, Parent Selection, Domain Harness, Staged Evaluation
+
+### Pi Extension
+
+Install the HyperAgents extension for [Pi coding agent](https://github.com/nicholasgasior/pi-coding-agent):
+
+```bash
+# Copy to Pi extensions directory
+cp -R pi-extension ~/.pi/agent/extensions/hyperagents
+```
+
+Provides the same commands (`/hyperagents:evolve`, `/hyperagents:status`, etc.) plus LLM-callable tools (`hyperagents_status`, `hyperagents_read_archive`, `hyperagents_append_archive`, `hyperagents_select_parent`, `hyperagents_read_config`, `hyperagents_write_config`).
+
+### npm Package
+
+```bash
+npm install hyperagents
+```
+
+### How It Works
+
+HyperAgents runs an evolutionary loop over your code:
+
+```
+SELECT PARENT --> MUTATE (meta-agent) --> EVALUATE (fitness) --> ARCHIVE --> repeat
+```
+
+Each generation, a meta-agent modifies target code in a sandboxed git worktree. Changes are scored by a pluggable fitness function. The best mutations survive and become parents for the next generation. The system can even improve its own selection algorithms and evaluation criteria.
+
+### Repository Structure
+
+```
+.
+├── .claude-plugin/marketplace.json   # Claude Code marketplace registry
+├── plugins/hyperagents/              # Claude Code plugin
+│   ├── .claude-plugin/plugin.json
+│   ├── commands/                     # 5 slash commands
+│   ├── agents/                       # 4 specialized subagents
+│   ├── skills/                       # 6 auto-activating skills
+│   ├── hooks/                        # 3 event-driven hooks
+│   └── scripts/                      # 2 CLI utilities
+├── pi-extension/                     # Pi coding agent extension
+│   └── index.ts
+├── claude-plugin/                    # Standalone Claude plugin (mirrors plugins/hyperagents)
+└── [original HyperAgents code...]    # Meta's research implementation
+```
+
+---
+
+## Original HyperAgents Research
+
+### Setup
 ```bash
 # API keys, put these into .env file
 OPENAI_API_KEY=...

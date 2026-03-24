@@ -1,0 +1,32 @@
+{
+  "name": "hyperagents",
+  "owner": {
+    "name": "Zpankz",
+    "url": "https://github.com/Zpankz"
+  },
+  "metadata": {
+    "description": "Self-referential self-improving agents for Claude Code — evolutionary optimization via LLM-driven mutation and fitness-based selection",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "hyperagents",
+      "source": "./plugins/hyperagents",
+      "description": "Self-referential self-improving agent framework for Claude Code. Evolutionary optimization of skills, agents, hooks, and code via LLM-driven mutation and fitness-based selection. Inspired by Meta's HyperAgents paper.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Zpankz",
+        "url": "https://github.com/Zpankz"
+      },
+      "repository": "https://github.com/Zpankz/hyperagents",
+      "keywords": [
+        "self-improvement",
+        "evolutionary",
+        "meta-agent",
+        "self-referential",
+        "open-ended",
+        "hyperagents"
+      ]
+    }
+  ]
+}
