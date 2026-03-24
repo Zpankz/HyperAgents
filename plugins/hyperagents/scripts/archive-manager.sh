@@ -15,6 +15,44 @@ set -euo pipefail
 HYPERAGENTS_DIR=".hyperagents"
 ARCHIVE_FILE="${HYPERAGENTS_DIR}/archive.jsonl"
 
+# --- Help flag handler ---
+show_help() {
+  cat <<'HELPEOF'
+Usage: archive-manager.sh <command> [args]
+
+Commands:
+  show              Display archive overview
+  best              Show best generation
+  lineage <genid>   Trace ancestry of a generation
+  fitness           Show fitness trajectory
+  export <genid>    Export generation's diff
+  validate          Check archive integrity
+  --help, -h        Show this help message
+
+<genid> must be "initial" or a non-negative integer (e.g., 0, 1, 42).
+HELPEOF
+  exit 0
+}
+
+# --- Input validation helpers ---
+validate_genid() {
+  local genid="$1"
+  if [ "$genid" = "initial" ]; then
+    return 0
+  fi
+  if ! [[ "$genid" =~ ^[0-9]+$ ]]; then
+    echo "Error: Invalid genid '$genid'. Must be 'initial' or a non-negative integer." >&2
+    exit 1
+  fi
+}
+
+# Check for help flag anywhere in args
+for arg in "$@"; do
+  case "$arg" in
+    --help|-h) show_help ;;
+  esac
+done
+
 if [ ! -f "$ARCHIVE_FILE" ]; then
   echo "Error: No archive found at ${ARCHIVE_FILE}"
   echo "Run /hyperagents:evolve to start an evolution loop first."
@@ -98,12 +136,13 @@ case "$COMMAND" in
 
   lineage)
     GENID="${2:?Usage: archive-manager.sh lineage <genid>}"
+    validate_genid "$GENID"
     echo "=== Lineage of gen_${GENID} ==="
 
     CURRENT="$GENID"
     DEPTH=0
     while [ "$CURRENT" != "null" ] && [ "$CURRENT" != "none" ] && [ -n "$CURRENT" ]; do
-      INDENT=$(printf '%*s' $((DEPTH * 2)) '')
+      INDENT=$(printf '%*s' "$((DEPTH * 2))" '')
       echo "${INDENT}gen_${CURRENT}"
 
       META_FILE="${HYPERAGENTS_DIR}/gen_${CURRENT}/metadata.json"
@@ -115,7 +154,7 @@ case "$COMMAND" in
       DEPTH=$((DEPTH + 1))
 
       # Safety: prevent infinite loops
-      if [ $DEPTH -gt 100 ]; then
+      if [ "$DEPTH" -gt 100 ]; then
         echo "Warning: lineage depth exceeded 100, stopping."
         break
       fi
@@ -175,7 +214,7 @@ case "$COMMAND" in
       fi
     done
 
-    if [ $ERRORS -eq 0 ]; then
+    if [ "$ERRORS" -eq 0 ]; then
       echo "Archive is valid. No integrity issues found."
     else
       echo ""
@@ -185,6 +224,7 @@ case "$COMMAND" in
 
   export)
     GENID="${2:?Usage: archive-manager.sh export <genid>}"
+    validate_genid "$GENID"
     DIFF="${HYPERAGENTS_DIR}/gen_${GENID}/agent_output/model_patch.diff"
 
     if [ ! -f "$DIFF" ]; then
@@ -198,7 +238,7 @@ case "$COMMAND" in
     ;;
 
   *)
-    echo "Usage: archive-manager.sh {show|best|lineage|fitness|validate|export} [args]"
+    echo "Usage: archive-manager.sh {show|best|lineage|fitness|validate|export|--help} [args]"
     exit 1
     ;;
 esac

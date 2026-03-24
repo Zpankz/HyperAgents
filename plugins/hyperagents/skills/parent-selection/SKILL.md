@@ -117,6 +117,22 @@ A generation is a valid parent if:
 | Ablation study, control condition | `latest` |
 | Many generations complete, seeking novelty | `score_child_prop` |
 
+## Examples
+
+These scenarios illustrate when this skill activates and what it does.
+
+### Scenario 1: Evolve loop needs a parent for the next generation
+**Trigger**: The evolve command reaches the "Select Parent" phase of the generate loop and calls `/hyperagents:select-parent --method score_prop`.
+**Action**: The skill loads `archive.jsonl`, filters to valid parents, computes fitness-weighted probabilities, and returns the selected parent genid. For example, with 4 valid parents scoring [0.60, 0.75, 0.82, 0.91], parent gen_4 (0.91) has a ~30% chance of selection while gen_1 (0.60) has a ~19% chance.
+
+### Scenario 2: User asks about exploration vs exploitation tradeoffs
+**Trigger**: User asks "My evolution seems stuck, all offspring come from the same parent. How do I increase diversity?"
+**Action**: The skill diagnoses the issue as over-exploitation and recommends switching from `best` to `score_child_prop`, which down-weights parents that already have many children. It explains the formula and shows how the adjusted probabilities would look for the current archive.
+
+### Scenario 3: Dry-run to inspect selection probabilities
+**Trigger**: User runs `/hyperagents:select-parent --method score_child_prop --dry-run`.
+**Action**: The skill computes and displays a table of all valid parents with their fitness scores, child counts, adjusted weights, and selection probabilities -- without actually selecting a parent. This lets the user verify the selection dynamics before committing to a strategy.
+
 ## Diagnostics
 
 Signs of poor parent selection:

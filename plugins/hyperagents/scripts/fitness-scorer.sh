@@ -12,6 +12,51 @@ set -euo pipefail
 
 HYPERAGENTS_DIR=".hyperagents"
 
+# --- Help flag handler ---
+show_help() {
+  cat <<'HELPEOF'
+Usage: fitness-scorer.sh <command> [args]
+
+Commands:
+  compute <genid> [domain]    Compute fitness for a generation
+  compare <genid1> <genid2>   Compare two generations
+  rank                        Rank all generations
+  trend                       Show fitness trend over time
+  --help, -h                  Show this help message
+
+<genid> must be "initial" or a non-negative integer (e.g., 0, 1, 42).
+<domain> must contain only alphanumeric characters, hyphens, and underscores.
+HELPEOF
+  exit 0
+}
+
+# --- Input validation helpers ---
+validate_genid() {
+  local genid="$1"
+  if [ "$genid" = "initial" ]; then
+    return 0
+  fi
+  if ! [[ "$genid" =~ ^[0-9]+$ ]]; then
+    echo "Error: Invalid genid '$genid'. Must be 'initial' or a non-negative integer." >&2
+    exit 1
+  fi
+}
+
+validate_domain() {
+  local domain="$1"
+  if ! [[ "$domain" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+    echo "Error: Invalid domain '$domain'. Must contain only alphanumeric characters, hyphens, and underscores." >&2
+    exit 1
+  fi
+}
+
+# Check for help flag anywhere in args
+for arg in "$@"; do
+  case "$arg" in
+    --help|-h) show_help ;;
+  esac
+done
+
 get_score() {
   local GENID="$1"
   local DOMAIN="${2:-}"
@@ -60,8 +105,9 @@ get_score() {
       fi
     done
 
-    if [ $TOTAL -gt 0 ]; then
-      echo "$SUM / $TOTAL" | bc -l 2>/dev/null || echo "$SUM"
+    if [ "$TOTAL" -gt 0 ]; then
+      # Guard against division by zero (defensive, TOTAL already > 0 here)
+      echo "scale=6; $SUM / $TOTAL" | bc -l 2>/dev/null || echo "$SUM"
     else
       echo "null"
     fi
@@ -73,7 +119,11 @@ COMMAND="${1:-rank}"
 case "$COMMAND" in
   compute)
     GENID="${2:?Usage: fitness-scorer.sh compute <genid> [domain]}"
+    validate_genid "$GENID"
     DOMAIN="${3:-}"
+    if [ -n "$DOMAIN" ]; then
+      validate_domain "$DOMAIN"
+    fi
     SCORE=$(get_score "$GENID" "$DOMAIN")
     echo "gen_${GENID}: ${SCORE}"
     ;;
@@ -81,6 +131,8 @@ case "$COMMAND" in
   compare)
     GENID1="${2:?Usage: fitness-scorer.sh compare <genid1> <genid2>}"
     GENID2="${3:?Usage: fitness-scorer.sh compare <genid1> <genid2>}"
+    validate_genid "$GENID1"
+    validate_genid "$GENID2"
     SCORE1=$(get_score "$GENID1")
     SCORE2=$(get_score "$GENID2")
     echo "gen_${GENID1}: ${SCORE1}"
@@ -156,7 +208,7 @@ case "$COMMAND" in
     ;;
 
   *)
-    echo "Usage: fitness-scorer.sh {compute|compare|rank|trend} [args]"
+    echo "Usage: fitness-scorer.sh {compute|compare|rank|trend|--help} [args]"
     exit 1
     ;;
 esac

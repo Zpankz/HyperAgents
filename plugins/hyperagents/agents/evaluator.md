@@ -1,6 +1,6 @@
 ---
 name: evaluator
-description: "Fitness evaluation agent that scores a generation's output against domain-specific criteria. Runs the evaluation harness, generates reports, and computes fitness scores. Used by the evolve command to assess each generation."
+description: "Fitness evaluation agent that scores a generation's output against domain-specific criteria. Runs the evaluation harness, generates reports, and computes fitness scores. Used by the evolve command to assess each generation. Examples: dispatch when the evolve loop reaches the evaluation phase and needs to score a newly mutated generation, dispatch when a user runs /hyperagents:evaluate --genid 5 to manually assess a specific archived generation, dispatch when staged evaluation passes and a full comprehensive scoring run is needed."
 tools: [Read, Bash, Grep, Glob]
 model: haiku
 color: cyan

@@ -1,6 +1,6 @@
 ---
 name: ensemble-agent
-description: "Ensemble agent that combines predictions from multiple archive generations to produce superior results. Selects the best-performing generation for each task based on archive fitness data, or uses majority voting across top-K generations."
+description: "Ensemble agent that combines predictions from multiple archive generations to produce superior results. Selects the best-performing generation for each task based on archive fitness data, or uses majority voting across top-K generations. Examples: dispatch when the evolve loop has multiple valid generations and wants to combine their outputs for superior predictions, dispatch when a user requests ensemble evaluation with --optimize ensemble to aggregate results across top-K archive members, dispatch when majority voting or weighted voting is needed to break ties between competing generation outputs."
 tools: [Read, Bash, Grep, Glob]
 model: haiku
 color: yellow

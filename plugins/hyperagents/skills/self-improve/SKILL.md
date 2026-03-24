@@ -116,6 +116,22 @@ When asked to self-improve a target:
 5. Apply best generation's changes
 ```
 
+## Examples
+
+These scenarios illustrate when this skill activates and what it does.
+
+### Scenario 1: User requests skill improvement
+**Trigger**: User says "Improve the code-review skill so it catches more security issues."
+**Action**: The skill creates a `.hyperagents/` workspace, defines a fitness function based on security-issue detection rate, snapshots the current skill as `gen_initial`, and launches the evolve loop targeting the skill's SKILL.md. Each generation mutates the skill instructions, evaluates against a set of code samples with known vulnerabilities, and archives the result.
+
+### Scenario 2: Automatic recovery after repeated task failure
+**Trigger**: A task agent fails 3 consecutive times on similar inputs (e.g., test generation keeps producing invalid syntax).
+**Action**: The skill detects the failure pattern and initiates a self-improvement cycle on the failing agent's prompt. It uses the failing inputs as evaluation samples, scores each mutation by whether the generated output passes validation, and selects the best-performing prompt revision.
+
+### Scenario 3: User invokes the evolve command directly
+**Trigger**: User runs `/hyperagents:evolve --domain tests --generations 5 --target src/utils/parser.ts`.
+**Action**: The skill orchestrates 5 generations of mutations to `parser.ts`, evaluating each against the project's test suite. It selects parents using score-proportional selection, captures diffs, and reports the best generation's improvements along with a suggestion to apply the winning patch.
+
 ## Anti-Patterns to Avoid
 
 - **Goodhart's Law**: Don't let the meta-agent optimize the evaluator to give itself higher scores without real improvement

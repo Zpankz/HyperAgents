@@ -150,6 +150,22 @@ Combines multiple signals:
 | `eval_timeout` | number | Timeout in seconds per task |
 | `max_workers` | number | Parallel evaluation workers |
 
+## Examples
+
+These scenarios illustrate when this skill activates and what it does.
+
+### Scenario 1: Setting up a custom evaluation domain for a new project
+**Trigger**: User says "I want to evolve my data pipeline code. How do I create a harness for it?"
+**Action**: The skill walks the user through the four-step domain setup: defining a task list JSON with representative pipeline inputs and expected outputs, writing a `harness.sh` script that feeds each task to the agent and collects predictions, creating a `report.sh` that compares outputs to expectations and computes an accuracy score, and registering the domain in `.hyperagents/config.json` with the appropriate `score_key`, splits, and staged eval settings.
+
+### Scenario 2: Debugging why a domain evaluation returns null scores
+**Trigger**: User runs `/hyperagents:evolve --domain my_domain` and the status shows `fitness: null` for every generation.
+**Action**: The skill diagnoses common harness failures: the harness script is not executable, the `score_key` in `config.json` does not match the key written by `report.sh`, or the `predictions.csv` format has mismatched column headers. It suggests running the harness manually with `--num-samples 1` to isolate the failure point and inspecting the `report.json` output for the expected score key.
+
+### Scenario 3: Configuring multi-domain evolution
+**Trigger**: User says "I want to optimize for both test pass rate and code quality simultaneously."
+**Action**: The skill explains how to register multiple domains in `config.json` (e.g., `tests` and `lint`), sets appropriate weights via the `composite` domain type, and notes that aggregate fitness is the mean across domains. It warns that a generation must score non-null on ALL domains to be a valid parent, so each harness must be independently functional before combining them.
+
 ## Multi-Domain Evolution
 
 HyperAgents supports evolving against multiple domains simultaneously:

@@ -1,11 +1,25 @@
 ---
 name: evaluate
 description: "Evaluate a specific generation or the current codebase against fitness criteria. Supports staged (quick) and full evaluation modes. Use: /hyperagents:evaluate [--genid <id>] [--domain <domain>] [--staged]"
+allowed-tools: [Read, Bash, Grep, Glob, Agent]
 ---
 
 # HyperAgents Evaluate Command
 
 Run fitness evaluation on a generation or the current codebase state.
+
+## Quick Start
+
+```bash
+# Evaluate the current working tree with the default domain (most common)
+/hyperagents:evaluate
+
+# Run a quick staged check before committing to a full evaluation
+/hyperagents:evaluate --staged
+
+# Evaluate a specific archived generation against a named domain
+/hyperagents:evaluate --genid 4 --domain review
+```
 
 ## Arguments
 

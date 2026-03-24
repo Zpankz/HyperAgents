@@ -1,6 +1,7 @@
 ---
 name: select-parent
 description: "Select the next parent generation for mutation using configurable selection strategies. Use: /hyperagents:select-parent [--method <method>]"
+allowed-tools: [Read, Bash]
 ---
 
 # HyperAgents Select Parent Command

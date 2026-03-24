@@ -1,11 +1,25 @@
 ---
 name: archive
 description: "View, query, and manage the HyperAgents evolutionary archive. Shows generation history, fitness scores, lineage trees, and best performers. Use: /hyperagents:archive [show|best|lineage|prune|export]"
+allowed-tools: [Read, Bash, Glob]
 ---
 
 # HyperAgents Archive Command
 
 Manage the evolutionary archive that tracks all generations of self-improvement.
+
+## Quick Start
+
+```bash
+# Show the full archive table with fitness scores for every generation
+/hyperagents:archive show
+
+# Display the best-performing generation and offer to apply its patch
+/hyperagents:archive best
+
+# Trace the ancestry of a specific generation to see fitness progression
+/hyperagents:archive lineage 4
+```
 
 ## Subcommands
 

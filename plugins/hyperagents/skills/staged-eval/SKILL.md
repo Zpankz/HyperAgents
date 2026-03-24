@@ -105,6 +105,22 @@ Use `--skip-staged` flag when:
 - You need accurate scores for every generation (research/analysis)
 - You're running a final evaluation of the best generation
 
+## Examples
+
+These scenarios illustrate when this skill activates and what it does.
+
+### Scenario 1: Staged eval catches a broken mutation early
+**Trigger**: The evolve loop runs staged evaluation on generation 3, which has a syntax error introduced by the meta-agent.
+**Action**: The staged eval runs 10 out of 100 test items. All 10 fail because the code does not parse, producing a score of 0. The skill marks generation 3 as failed (`valid_parent: false`) and skips the full 100-item evaluation, saving approximately 90% of the compute cost for this generation. The loop proceeds immediately to generation 4.
+
+### Scenario 2: User skips staged eval for a known-safe change
+**Trigger**: User runs `/hyperagents:evolve --skip-staged` because they are making a minor prompt wording adjustment and want accurate full-evaluation scores.
+**Action**: The skill bypasses the two-phase pattern and runs the full evaluation directly. No score adjustment is applied since the full sample set is used. This is appropriate when the mutation is low-risk and the user prefers precision over speed.
+
+### Scenario 3: Understanding score adjustment after staged-only evaluation
+**Trigger**: User asks "Why does generation 6 show a score of 0.08 when its staged eval was 0.80?"
+**Action**: The skill explains the score adjustment formula: `adjusted_score = 0.80 * (10 / 100) = 0.08`. Because generation 6 only passed staged evaluation (the full eval was not run, possibly due to a loop interruption), its raw score of 0.80 is scaled down by the staged-to-full sample ratio. This prevents a generation evaluated on 10 easy items from outcompeting one that passed 80 out of 100 items in a full run.
+
 ## Cost Savings
 
 Typical savings in a 20-generation evolution run:

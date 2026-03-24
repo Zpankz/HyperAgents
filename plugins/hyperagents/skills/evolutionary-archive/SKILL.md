@@ -114,6 +114,22 @@ When ensemble optimization is enabled, additional scores are stored at:
 
 The `max` score type returns the better of agent and ensemble scores.
 
+## Examples
+
+These scenarios illustrate when this skill activates and what it does.
+
+### Scenario 1: Inspecting the lineage of the best generation
+**Trigger**: User asks "Show me how generation 7 evolved -- what was its lineage?"
+**Action**: The skill reads `gen_7/metadata.json` to find `parent_genid`, then follows the chain of `parent_genid` links back to `gen_initial`. For each ancestor, it reads the `report.json` to retrieve fitness scores and the `model_patch.diff` to summarize what changed. It presents the full lineage as a chain (e.g., initial -> gen_1 -> gen_4 -> gen_7) with fitness scores at each step.
+
+### Scenario 2: Recovering from a corrupted archive
+**Trigger**: User reports "The evolve command crashed mid-run and now `/hyperagents:status` shows an error."
+**Action**: The skill reads `archive.jsonl` and identifies the last complete JSON line as the reliable state. If the final line is truncated, it trims the file to the last valid line. It then cross-checks that every genid referenced in the archive has a corresponding `gen_<id>/metadata.json` directory, flagging any orphaned or missing entries.
+
+### Scenario 3: Querying the archive for improvement patterns
+**Trigger**: User asks "Which types of changes led to the biggest fitness improvements?"
+**Action**: The skill iterates through all generations in the archive, comparing each generation's fitness to its parent's fitness. For each positive delta, it reads the corresponding `model_patch.diff` and categorizes the change (prompt edit, logic refactor, tool change, etc.). It summarizes the results as a ranked list of change types by average fitness improvement.
+
 ## Safety Rules
 
 1. **Never modify archive.jsonl in place** — only append

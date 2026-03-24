@@ -149,3 +149,19 @@ adjusted_score = raw_score * staged_eval_fraction
 Where `staged_eval_fraction = staged_samples / full_samples`.
 
 This prevents staged-only generations from appearing artificially competitive in parent selection.
+
+## Examples
+
+These scenarios illustrate when this skill activates and what it does.
+
+### Scenario 1: Running a composite fitness evaluation
+**Trigger**: User runs `/hyperagents:evaluate --domain composite` after configuring a composite domain with tests (weight 0.5), lint (weight 0.2), and review (weight 0.3).
+**Action**: The skill runs each component evaluator in sequence: the test harness produces a pass rate of 0.90, the lint scorer computes a 0.85 reduction in issues, and the LLM-as-judge review scores the diff at 0.78. The composite score is computed as `0.5*0.90 + 0.2*0.85 + 0.3*0.78 = 0.854`. The result is written to `report.json` with the composite score and per-component breakdowns.
+
+### Scenario 2: Normalizing a non-standard fitness metric
+**Trigger**: User creates a custom benchmark domain where raw scores range from 0 to 1000 instead of 0 to 1.
+**Action**: The skill detects that the score in `report.json` exceeds 1.0 and warns that all fitness scores must be in the [0, 1] range. It recommends normalizing by dividing by the baseline score (e.g., `score = raw / 1000`) or by using a min-max normalization against the initial generation's baseline. It shows how to add the normalization step to the domain's `report.sh`.
+
+### Scenario 3: Diagnosing why a generation's score is unexpectedly low
+**Trigger**: User asks "Generation 5 scored 0.12 but generation 4 scored 0.85. What happened?"
+**Action**: The skill reads both `gen_5/report.json` and `gen_4/report.json`, comparing per-item predictions in `predictions.csv`. It identifies which specific tasks regressed, reads the `model_patch.diff` for gen_5 to pinpoint the code change that caused the regression, and suggests reverting the problematic portion of the diff or using gen_4 as the parent for the next generation.

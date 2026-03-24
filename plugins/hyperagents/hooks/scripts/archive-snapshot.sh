@@ -43,6 +43,22 @@ cat > "$SNAPSHOT_FILE" << EOF
 }
 EOF
 
+# --- Size limit check: warn if .hyperagents/ exceeds 100MB ---
+MAX_SIZE_MB=100
+if command -v du >/dev/null 2>&1; then
+  # du -sm gives size in MB (POSIX-compatible with GNU/BSD coreutils)
+  DIR_SIZE_MB=$(du -sm "$HYPERAGENTS_DIR" 2>/dev/null | cut -f1 || echo "0")
+  if [ "${DIR_SIZE_MB:-0}" -ge "$MAX_SIZE_MB" ] 2>/dev/null; then
+    echo "WARNING: ${HYPERAGENTS_DIR}/ is ${DIR_SIZE_MB}MB (exceeds ${MAX_SIZE_MB}MB limit)." >&2
+    echo "Consider running archive-manager.sh validate and pruning old generations." >&2
+  fi
+fi
+
+# --- Prune snapshots older than 7 days to prevent disk bloat ---
+if [ -d "$SNAPSHOT_DIR" ]; then
+  find "$SNAPSHOT_DIR" -name 'session_*.json' -type f -mtime +7 -delete 2>/dev/null || true
+fi
+
 # Clean up active evolution marker if present
 rm -f "${HYPERAGENTS_DIR}/.evolution_active"
 rm -f "${HYPERAGENTS_DIR}/current_generation_edits.jsonl"
