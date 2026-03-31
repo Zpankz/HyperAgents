@@ -34,5 +34,18 @@
         }
       ]
     }
+  ],
+  "Schedule": [
+    {
+      "cron": "0 * * * *",
+      "description": "Hourly VIVA vault recursive optimization loop — deepens insight quality, strengthens cross-domain interconnections, and integrates learnings from the HyperAgents evolutionary archive.",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/run-vault-optimizer.sh\"",
+          "timeout": 480
+        }
+      ]
+    }
   ]
 }
