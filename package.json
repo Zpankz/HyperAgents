@@ -1,0 +1,38 @@
+{
+  "name": "hyperagents",
+  "version": "0.1.0",
+  "description": "HyperAgents with Claude Code and Pi coding agent integrations for evolutionary self-improvement workflows.",
+  "keywords": [
+    "pi-package",
+    "hyperagents",
+    "self-improvement",
+    "evolutionary",
+    "meta-agent",
+    "self-referential"
+  ],
+  "author": "Zpankz",
+  "license": "CC-BY-NC-SA-4.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zpankz/HyperAgents.git"
+  },
+  "homepage": "https://github.com/Zpankz/HyperAgents",
+  "files": [
+    "pi-extension/",
+    "plugins/",
+    ".claude-plugin/",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "peerDependencies": {
+    "@mariozechner/pi-ai": "*",
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-tui": "*",
+    "@sinclair/typebox": "*"
+  },
+  "pi": {
+    "extensions": [
+      "./pi-extension/index.ts"
+    ]
+  }
+}

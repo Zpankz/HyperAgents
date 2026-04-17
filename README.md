@@ -55,7 +55,16 @@ Install the HyperAgents plugin for Claude Code:
 Install the HyperAgents extension for [Pi coding agent](https://github.com/nicholasgasior/pi-coding-agent):
 
 ```bash
-# Copy to Pi extensions directory
+# Recommended: install directly from GitHub as a Pi package
+pi install https://github.com/Zpankz/HyperAgents.git
+
+# Then reload or restart Pi
+/reload
+```
+
+Legacy/manual install:
+
+```bash
 cp -R pi-extension ~/.pi/agent/extensions/hyperagents
 ```
 
@@ -81,6 +90,7 @@ Each generation, a meta-agent modifies target code in a sandboxed git worktree. 
 
 ```
 .
+├── package.json                      # Pi package manifest
 ├── .claude-plugin/marketplace.json   # Claude Code marketplace registry
 ├── plugins/hyperagents/              # Claude Code plugin
 │   ├── .claude-plugin/plugin.json
